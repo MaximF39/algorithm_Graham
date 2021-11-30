@@ -55,7 +55,9 @@ def graham_convex_hull(points):
 
     def turn(one, two, free):
         """
-        Находит угол между 3 точками, и если больше 180 градусов, который внутри оболочки
+        Находит произведение векторов и передаёт их в cmp
+        Это тоже самое, что если бы искал алгоритм: синус между угла,
+        и если больше 180 градусов, который внутри оболочки
         https://prnt.sc/20y6cia
         cmp((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1), 0)
         Если синус < 180: 1
@@ -64,9 +66,11 @@ def graham_convex_hull(points):
         """
         dx21 = two[0] - one[0]
         dy31 = free[1] - one[1]
+        vector1 = dx21 * dy31
         dx31 = free[0] - one[0]
         dy21 = two[1] - one[1]
-        return cmp((dx21 * dy31 - dx31 * dy21), 0)
+        vector2 = dx31 * dy21
+        return cmp((vector1 - vector2), 0)
 
     def _keep_left(hull, r):
         """ При -1, точка не считается частью выпуклой оболочки и удаляется из списка(стэка) """

@@ -34,7 +34,7 @@ def do_cairo():
 
 def save_cairo(svg: SVGSurface, filename: str = config["NAME_PNG"]) -> None:
     """ Сохраняет в пнг и свг форматах """
-    if config['yes_or_not_png']:
+    if config['save_or_not_png']:
         svg.write_to_png(filename)
     svg.finish()
 
@@ -83,9 +83,9 @@ def graham_convex_hull(points):
     return l.extend(u[1:-1]) or l
 
 
-def read_file(file_name: str = config['FILE_NAME']) -> iter([int, int]):
+def read_file() -> [int, int]:
     test_data = []
-    with open(file_name, 'r') as f:
+    with open(config['FILE_NAME'], 'r') as f:
         f.readline()
         for i in f:
             x, y = map(int, i.split())

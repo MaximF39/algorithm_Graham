@@ -1,14 +1,11 @@
 from functools import reduce
 from cairo import SVGSurface, Context, Matrix, LINE_CAP_ROUND
-from config import config
+import config as cfg
 
 
-def do_circle(obj: Context, x: int, y: int) -> None:
-    """ do circle in obj, this cairo
-        x - коррдината по х
-        y - коррдината по у
-        """
-    y = config['HEIGHT'] - y
+def draw_circle(obj: Context, x: int, y: int) -> None:
+    """ draw circle in obj, this cairo """
+    y = cfg.HEIGHT - y
 
     obj.save()
     obj.set_line_width(6.0)
@@ -19,11 +16,11 @@ def do_circle(obj: Context, x: int, y: int) -> None:
     obj.restore()
 
 
-def do_cairo():
+def create_holst():
     """ Создаёт полотно для рисование объектов """
-    svg = SVGSurface(config['NAME_SVG'], config['WIDTH'], config["HEIGHT"])
+    svg = SVGSurface(cfg.NAME_SVG, cfg.WIDTH, cfg.HEIGHT)
     holst = Context(svg)
-    m = Matrix(yy=-1, y0=config['HEIGHT'])
+    m = Matrix(yy=-1, y0=cfg.HEIGHT)
     holst.transform(m)
     holst.save()
     holst.set_source_rgb(0.3, 0.3, 0.05)
@@ -32,14 +29,13 @@ def do_cairo():
     return holst, svg
 
 
-def save_cairo(svg: SVGSurface, filename: str = config["NAME_PNG"]) -> None:
-    """ Сохраняет в пнг и свг форматах """
-    if config['save_or_not_png']:
-        svg.write_to_png(filename)
+def save_png(svg: SVGSurface) -> None:
+    if cfg.SAVE_PNG:
+        svg.write_to_png(cfg.NAME_PNG)
     svg.finish()
 
 
-def graham_convex_hull(points):
+def algorithm_graham(points:[int, int]):
     """
     Алгоритм Грэтхема, который работает со сложность n log2(n)
     """
@@ -87,19 +83,9 @@ def graham_convex_hull(points):
     return l.extend(u[1:-1]) or l
 
 
-def read_file() -> [int, int]:
-    test_data = []
-    with open(config['FILE_NAME'], 'r') as f:
-        f.readline()
-        for i in f:
-            x, y = map(int, i.split())
-            test_data.append([x, y])
-    return test_data
-
-
 def draw_line(obj: Context, x1: int, y1: int, x2: int, y2: int, color: int = 0, width: int = 5) -> None:
-    y1 = config["HEIGHT"] - y1
-    y2 = config["HEIGHT"] - y2
+    y1 = cfg.HEIGHT - y1
+    y2 = cfg.HEIGHT - y2
     obj.set_line_cap(LINE_CAP_ROUND)
     if not color:
         color = [1, 1, 1, 1]
@@ -117,7 +103,7 @@ def draw_line(obj: Context, x1: int, y1: int, x2: int, y2: int, color: int = 0, 
     obj.stroke_preserve()
 
 
-def do_line(holst, points):
+def draw_lines(holst, points):
     for i, v in enumerate(points):
         if points[i] == points[-1]:
             draw_line(holst, *points[0], *points[-1])
@@ -125,17 +111,10 @@ def do_line(holst, points):
         draw_line(holst, *v, *points[i + 1])
 
 
-def main():
-    holst, svg = do_cairo()
-    test_data = read_file()
-    # start_time = time.time()
-    result = graham_convex_hull(test_data)
-    # print((time.time() - start_time))
-    for i in test_data:
-        do_circle(holst, *i)
-    do_line(holst, result)
-    save_cairo(svg)
-
-
-if __name__ == '__main__':
-    main()
+def draw_algorithm_graham(points):
+    holst, svg = create_holst()
+    result = algorithm_graham(points)
+    for coord in points:
+        draw_circle(holst, *coord)
+    draw_lines(holst, result)
+    save_png(svg)

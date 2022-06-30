@@ -1,27 +1,13 @@
-import create_test_data
-import png
+"""
+Big O n * log2(n)
+Алгоритм Грэхема
+"""
+import data
+import src
+import config
 
-create_test_data.main()
-png.main()
-
-# СЛОЖНОСТЬ АЛГОРИТА n * log2(n)
-# На самом деле n * log2(n) + 2 * n. поэтому возникла эта погрешность в 10%
-
-# 10 ** 3 * log2(10**3)
-# 10 ** 4 = 0.002
-
-# 10 ** 4 * log2(10 ** 4)
-# 1.3 * 10 ** 5 = 0.026
-# практически разница должны быть 13
-# теоретически разница должны быть 13
-
-# 10 ** 6 * log2(10**6) =
-# 2 * 10 ** 7 = 4.43
-# 2215 - 2000 = 215.
-# 10% погрешность
-
-# 10 ** 6 * log2(10**6) + 2 * 10 ** 6 =
-# 2.2 * 10 ** 7 = 4.43
-
-# 2215 - 2200 = 15
-# погрешность очень мала.
+if __name__ == '__main__':
+    if not config.FILE:
+        data.create_file()
+    points = data.read_file()
+    src.draw_algorithm_graham(points)
